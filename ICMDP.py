@@ -871,16 +871,21 @@ class ICMDP:
     # C_n - a list of contexts in a corresponding order to M_n
     # description:
     #
-    def solve_ICMDP(self, gamma, contexts, expert_feature_exp, weights, tol = 0.001,flag = 'init',state_feature_exp = empty()):  #(self, M_n,C_n, alpha):
+    def solve_ICMDP(self, gamma, contexts, expert_feature_exp, weights, tol = 0.001,flag = 'init',state_feature_exp = empty(),algo='norm2'):  #(self, M_n,C_n, alpha):
 
         # define the function for the algorithm's input:
         feature_exp = lambda w : self.solve_MDP(gamma=gamma,tol=tol,w=w,flag=flag,state_feature_exp=state_feature_exp)
 
         # use constraint generation:
-        # old ver:
-        return constraint_generation_solver(contexts=contexts,expert_feature_expectations=expert_feature_exp,weights=weights,feature_expectations=feature_exp)
-        # new ver:
-        # return constraint_generation_solver_3(contexts=contexts,expert_feature_expectations=expert_feature_exp,weights=weights,feature_expectations=feature_exp)
-
+        # old ver (linear):
+        if (algo == 'linear'):
+            return constraint_generation_solver(contexts=contexts,expert_feature_expectations=expert_feature_exp,weights=weights,feature_expectations=feature_exp)
+        
+        # new ver (norm2):
+        elif (algo == 'norm2'):
+            return constraint_generation_solver_3(contexts=contexts,expert_feature_expectations=expert_feature_exp,weights=weights,feature_expectations=feature_exp)
+        
+        else:
+            print('Algorithm ' + algo + 'is not defined.')
     # end of function solve_ICMDP
     ##################################################
