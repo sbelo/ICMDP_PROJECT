@@ -4,7 +4,7 @@ from ICMDP import *
 from scipy.optimize import minimize
 # end of imports
 
-# some fuctions to be used later:
+# some functions to be used later:
 
 # do action function - returns the next x and speed for the given state and action:
 
@@ -79,8 +79,8 @@ def find_next_state(state,action,states_inv):
 
 # features:
 # 1. speed
-# 2. changing lane
-
+# 2. collisions
+# 3. off-road
 
 # actions:
 # 0 - do nothing
@@ -88,7 +88,7 @@ def find_next_state(state,action,states_inv):
 # 2 - move right
 
 # parameters:
-# right-left step siize:
+# right-left step size:
 step_size = 5
 
 # boundaries of the frame
@@ -105,7 +105,7 @@ road_right_bound = right_bound - 20
 # car size, width is half of the width in the format "[length,width]":
 my_car_size = [40, 10]
 
-# the y position of the player's car (stayes fixed during the game):
+# the y position of the player's car (stays fixed during the game):
 my_y = height - 10 - my_car_size[0]
 
 # initiate the speed feature values, displace for each speed and numbering:
@@ -140,7 +140,7 @@ for x in other_car_x:
 # 2 - move right
 actions = [0,1,2]
 
-# initiate staes array and state to index (states_inv) dictionary:
+# initiate states array and state to index (states_inv) dictionary:
 states = []
 states_inv = {}
 
@@ -183,6 +183,7 @@ THETA = Transitions(num_states=len(states), num_actions=len(actions))
 curr_state = 0
 for state in states:
     for action in actions:
+
         # find next state:
         new_state = find_next_state(state,action,states_inv)
 
@@ -208,7 +209,7 @@ weights = []
 # initiate an ICMDP object:
 mdp = ICMDP()
 
-# set the catculated features and transitions:
+# set the calculated features and transitions:
 mdp.set_F(F)
 mdp.set_THETA(THETA)
 
@@ -218,7 +219,7 @@ mdp.set_W(np.asarray([[-0.3,0.3,0.4],[0.4,-0.3,0.3],[0.3,0.4,-0.3]]))
 # initiate given contexts:
 Conts = [[0.3,0.3,0.4],[0.2,0.1,0.7],[0.5,0.1,0.4],[0.1,0.5,0.4],[0.25,0.25,0.5],[0.2,0.5,0.3],[0.05,0.3,0.65],[0.1,0.8,0.1],[0.1,0.1,0.8],[0.8,0.1,0.1]]
 
-# for each context, caculate the expert feature expectations and append to E_list, build contexts list of arrays:
+# for each context, calculate the expert feature expectations and append to E_list, build contexts list of arrays:
 for cont in Conts:
     mdp.set_C(np.asarray(cont))
     a = mdp.solve_CMDP(gamma=0.9,tol=0.0001,flag='init')
