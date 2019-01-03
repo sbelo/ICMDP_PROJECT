@@ -231,16 +231,19 @@ for cont in Conts:
 
 #################################################################
 # solve using constraint generation:
-# W_sol = mdp.solve_ICMDP(gamma=0.9,contexts=contexts, expert_feature_exp= E_list, weights=weights)
-# print(W_sol)
-# exit()
+# linear:
+# W_sol = mdp.solve_ICMDP(gamma=0.9,contexts=contexts, expert_feature_exp= E_list, weights=weights, algo='linear')
+# norm2:
+W_sol = mdp.solve_ICMDP(gamma=0.9,contexts=contexts, expert_feature_exp= E_list, weights=weights, algo='norm2')
+print(W_sol)
+exit()
 #################################################################
 # solve using optimization tool on minimizing the summed value difference over W between the expert and the optimal policy under W:
 func = lambda W:  mdp.feature_expectations_opt(W= W,gamma = 0.9,contexts=contexts,expert_mus=E_list,mode='value')
 W_0 = np.ones(9)
 W_0 = W_0/3
-W_mid = minimize(func,W_0, method='Nelder-Mead',options={'adaptive': False})
-
+res = minimize(func,W_0, method='Nelder-Mead',options={'adaptive': False})
+W_mid = res.x
 W_sol = np.zeros([3,3])
 for i in range(3):
     W_sol[i,:] = W_mid[i*3 : i*3+3]
@@ -251,8 +254,8 @@ exit()
 func = lambda W:  mdp.feature_expectations_opt(W= W,gamma = 0.9,contexts=contexts,expert_mus=E_list,mode='mu')
 W_0 = np.ones(9)
 W_0 = W_0/3
-W_mid = minimize(func,W_mid,method='Nelder-Mead',options={'adaptive': False})
-
+res = minimize(func,W_mid,method='Nelder-Mead',options={'adaptive': False})
+W_mid = res.x
 W_sol = np.zeros([3,3])
 for i in range(3):
     W_sol[i,:] = W_mid[i*3 : i*3+3]
