@@ -31,7 +31,7 @@ def constraint_generation_solver_3(contexts: list, expert_feature_expectations: 
 
         # Minimze (1/2)xPx + qx
         # s.t Gx <= h
-        num_constraints = context_dim * it
+        num_constraints = len(contexts) * it
         q = np.zeros(w_flat_len)
         P = np.identity(w_flat_len)
         h = -np.ones(num_constraints)
@@ -47,12 +47,12 @@ def constraint_generation_solver_3(contexts: list, expert_feature_expectations: 
                 i += 1
 
         # Solve QP, reconstruct W
-        W = (solve_qp(P, q, G, h).reshape((context_dim, num_features)))/ np.linalg.norm(W.flatten(), 2)
+        W = (solve_qp(P, q, G, h).reshape((context_dim, num_features)))
 
         # Stop condition TODO: come up with something better
         if it >= 20:
-            return W
+            return W/ np.linalg.norm(W.flatten(), 2)
 
         # Update PI^c(i)'s:
         for context in contexts:
-            PI[tuple(context)].append(feature_expectations(context @ W))
+            PI[tuple(context)].append(feature_expectations(context @ W).M)
