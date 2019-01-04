@@ -741,8 +741,8 @@ class ICMDP:
             Q_w = np.matmul(Q,w) #.reshape(self.__num_actions,self.__num_states)
 
             # calculate the value of the current policy and the policy:
-            next_V = np.reshape(np.amax(np.reshape(Q_w,[self.__num_states,self.__dim_features]),axis=1),next_V.shape)
-            policy = np.reshape(np.argmax(np.reshape(Q_w,[self.__num_states,self.__dim_features]), axis=1),policy.shape)
+            next_V = np.reshape(np.amax(np.reshape(Q_w,[self.__num_states,self.__num_actions]),axis=1),next_V.shape)
+            policy = np.reshape(np.argmax(np.reshape(Q_w,[self.__num_states,self.__num_actions]), axis=1),policy.shape)
             policy_ind = policy + policy_gap
 
             # update the per-state feature expectations:
